@@ -1,37 +1,74 @@
-# What do you have?  A poem...
-#blank line after author
-#First verse begins.
-#blank line after last line of first verse.
+def analize_poem(file)
+  title = nil
+  author = nil
+  verse_count = 0
+  line_count = 0
 
-# What am I asking for?
-# I ask Ruby code to run through the entire poem including the title and author name on top, to split/analyze the data and based on this data, to return a hash within a hash.
+  file.each_line do |line|
+    if title.nil?
+      title = line.chomp
+      next
+    end
 
-# What do I want?
-# A hash based on the specifications.
-#The outer hash displays the author's name and title of the poem; the inner hash displays the number of verses and the number of non-blank lines.
+    if author.nil?
+      author = line.chomp
+      next
+    end
 
-in IRB:
-"Wine comes in at the mouth\nAnd love comes in at the eye;\nThat's all we shall know for truth\nBefore we grow old and die.\nI lift the glass to my mouth,\nI look at you, and I sigh.\n"
+    if line == "\n"
+      verse_count += 1
+      next
+    end
 
-#I need Ruby code to return the number of lines by starting with first line before \n, and every one after that, separated by \n.  In this verse, the number of lines that return will be 6.
+    line_count += 1
+  end
 
-# For verse count, there will be \n\n in between verses, so the Ruby code will count the numbers of \n\n minus 1 to get the verse count.
+  {
+    author: author,
+    title: title,
+    verses: verse_count,
+    lines: line_count,
+  }
+end
 
-A Drinking Song #title
-William Butler Yeats #author
+def load_files
+  poems_data = {}
 
-Wine comes in at the mouth
-And love comes in at the eye;
-That's all we shall know for truth
-Before we grow old and die.
-I lift the glass to my mouth,
-I look at you, and I sigh.
+  file_names = Dir["../data/*"]
+  file_names.each do |file_name|
+    file = File.read(file_name)
+    poem_meta = analize_poem(file)
+    title_info = {poem_meta[:title] => {
+      verses: poem_meta[:verses],
+      lines: poem_meta[:lines],
+      }}
+
+      if poems_data.has_key?(poem_meta[:author])
+        poems_data[poem_meta[:author]].merge!(
+        title_info
+        )
+
+      else
+        poems_data.merge!({
+          poem_meta[:author] =>
+          title_info
+
+          })
+        end
+      end
+
+      poems_data
+    end
+
+    p load_files
 
 
 
-# ruby sample code.
-# process every line in a text file with ruby.
-#file='GettysburgAddress.txt'
-#File.readlines(file).each do |line|
-#  puts line
-#end
+
+
+
+    #
+    # puts title
+    # puts author
+    # puts verse_count
+    # puts line_count
